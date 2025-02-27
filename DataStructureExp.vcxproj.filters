@@ -18,11 +18,5 @@
     <ClCompile Include="DataStructureExp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="HuffmanTree.h">
-      <Filter>头文件</Filter>
-    </ClCompile>
-    <ClCompile Include="HuffmanTree.cpp">
-      <Filter>头文件</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
