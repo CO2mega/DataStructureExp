@@ -211,13 +211,16 @@ int main() {
     if (choice == 1) {
         cout << "输入要压缩的文件: ";
         cin >> input;
-        compress(input, strcat(input, ".huf"));
+        strcpy(output, input);
+        strcat(output, ".huf");
+        compress(input, output);
     }
     else if (choice == 2) {
         cout << "输入要解压的文件: ";
         cin >> input;
-        *output = *input;
+        strcpy(output, input);
         output[strlen(output) - 4] = '\0';
+        strcat(output, ".1");
         decompress(input,output);
     }
     else {
