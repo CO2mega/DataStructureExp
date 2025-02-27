@@ -1,5 +1,6 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 typedef struct {
@@ -201,9 +202,26 @@ void decompress(const char* input, const char* output) {
     }
 }
 
+bool compareFiles(const std::string& file1, const std::string& file2) {
+    std::ifstream f1(file1, std::ios::binary);
+    std::ifstream f2(file2, std::ios::binary);
+
+    if (!f1 || !f2) {
+        std::cerr << "无法打开文件" << std::endl;
+        return false;
+    }
+
+    char byte1, byte2;
+    while (f1.get(byte1) && f2.get(byte2)) {
+        if (byte1 != byte2) {
+            std::cout << "文件内容不同" << std::endl;
+            return false;
+        }
+    }
+}
 int main() {
     int choice;
-    cout << "1. 压缩文件\n2. 解压文件\n选择操作: ";
+    cout << "1. 压缩文件\n2. 解压文件\n3. 比较文件\n选择操作: ";
     cin >> choice;
 
     char input[256], output[256];
@@ -224,7 +242,14 @@ int main() {
         decompress(input,output);
     }
     else {
-        cerr << "无效选择!\n";
+       string file1, file2;
+		cout << "输入要比较的文件1: ";
+		cin >> file1;
+		cout << "输入要比较的文件2: ";
+		cin >> file2;
+        if (compareFiles(file1, file2)) {
+            cout<<"文件内容相同"<<endl;
+        }
     }
     return 0;
 }
