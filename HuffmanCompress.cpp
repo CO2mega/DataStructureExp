@@ -30,7 +30,7 @@ void build_huffman_tree(HuffmanNode* tree, int* weights, int n) {
         tree[i].weight = weights[i];
     }
 
-    for (int i = n; i < 2 * n - 1; ++i) {
+    for (int i = n; i < 2 * n-1; ++i) {
         int min1 = -1, min2 = -1;
 
         for (int j = 0; j < i; ++j) {
@@ -53,6 +53,19 @@ void build_huffman_tree(HuffmanNode* tree, int* weights, int n) {
         tree[min1].parent = tree[min2].parent = i;
         tree[min1].used = tree[min2].used = 1;
     }
+    //输出哈夫曼树
+    cout<<"是否输出哈夫曼树？(1/other): ";
+    char c;
+    cin>>c;
+    if (c == '1')
+    {
+        cout << "哈夫曼树:" << endl;
+        cout << "Node" << " " << "Weight" << " " << "Parent" << " " << "Left" << " " << "Right" << endl;
+        for (int i = 0; i < 2 * n-1; i++)
+        {
+            printf("pHT[%d] %d %d %d %d\n", i, tree[i].weight, tree[i].parent, tree[i].left, tree[i].right);
+        }
+    }
 }
 
 // 生成编码表
@@ -70,6 +83,7 @@ void generate_codes(HuffmanNode* tree, int** codes, int* code_lens) {
 
         codes[i] = (int*)malloc(len * sizeof(int));
         code_lens[i] = len;
+        //逆序存储编码
         for (int j = 0; j < len; ++j) {
             codes[i][j] = path[len - j - 1];
         }
@@ -91,8 +105,20 @@ void compress(const char* input, const char* output) {
 
     int ch;
     while ((ch = fgetc(fin)) != EOF) {
-        header.weight[ch & 0xFF]++;
+        header.weight[ch]++;
     }
+    cout<<"是否输出字符频率表？(1/other): ";
+    char c;
+    cin>>c;
+    if (c == '1')
+    {
+        cout << "Byte" << " " << "Weight" << endl;
+        for (int i = 0; i < 256; i++)
+        {
+            printf("0x%02X %d\n", i, header.weight[i]);
+        }
+    }
+
     fseek(fin, 0, SEEK_END);
     header.original_size = ftell(fin);
     fseek(fin, 0, SEEK_SET);
@@ -139,7 +165,17 @@ void compress(const char* input, const char* output) {
         fputc(buffer, fout);
     }
 
-    // 清理资源
+    // 计算压缩比
+    fseek(fout, 0, SEEK_END);
+    int compressed_size = ftell(fout);
+    float compression_ratio = (float)compressed_size / header.original_size;
+
+    // 输出文件头大小和压缩前后文件大小的对比和压缩比
+    printf("文件头大小: %d\n", sizeof(FileHeader));
+    printf("原始文件大小: %d\n", header.original_size);
+    printf("压缩后文件大小: %d\n", compressed_size);
+    printf("压缩比: %.2f\n", compression_ratio);
+
     fclose(fin);
     fclose(fout);
     for (int i = 0; i < 256; ++i) {
@@ -202,6 +238,7 @@ void decompress(const char* input, const char* output) {
     }
 }
 
+// 比较文件
 bool compareFiles(const std::string& file1, const std::string& file2) {
     std::ifstream f1(file1, std::ios::binary);
     std::ifstream f2(file2, std::ios::binary);
